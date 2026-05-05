@@ -150,4 +150,14 @@ class OrdenCompraControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, respuesta.getStatusCode());
         verify(ordenCompraService, never()).eliminar(99);
     }
+
+    @Test
+    void testCalcularCostoTotalOrden_retornaTotal() {
+        when(ordenCompraService.calcularTotal(1)).thenReturn(23500.0);
+
+        Double total = ordenCompraController.calcularCostoTotalOrden(1);
+
+        assertEquals(23500.0, total);
+        verify(ordenCompraService, times(1)).calcularTotal(1);
+    }
 }

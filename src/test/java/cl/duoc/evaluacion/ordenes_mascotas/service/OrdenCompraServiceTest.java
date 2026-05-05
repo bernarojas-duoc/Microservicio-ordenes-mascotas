@@ -141,4 +141,30 @@ class OrdenCompraServiceTest {
 
         assertEquals(0.0, total);
     }
+
+    @Test
+    void testGetPorEstado_sinResultados_retornaListaVacia() {
+        when(ordenCompraRepository.findByEstadoIgnoreCase("CANCELADA"))
+                .thenReturn(Arrays.asList());
+
+        List<OrdenCompra> resultado = ordenCompraService.getPorEstado("CANCELADA");
+
+        assertNotNull(resultado);
+        assertEquals(0, resultado.size());
+        verify(ordenCompraRepository, times(1)).findByEstadoIgnoreCase("CANCELADA");
+    }
+
+    @Test
+    void testGuardar_ordenSinItems_persisteSinError() {
+        OrdenCompra ordenSinItems = new OrdenCompra(null, "Carlos Soto", "PENDIENTE", null);
+        when(ordenCompraRepository.save(ordenSinItems)).thenReturn(
+                new OrdenCompra(5, "Carlos Soto", "PENDIENTE", null));
+
+        OrdenCompra resultado = ordenCompraService.guardar(ordenSinItems);
+
+        assertNotNull(resultado);
+        assertEquals("Carlos Soto", resultado.getNombreCliente());
+        assertEquals(5, resultado.getIdOrden());
+        verify(ordenCompraRepository, times(1)).save(ordenSinItems);
+    }
 }
